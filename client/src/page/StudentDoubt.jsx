@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
+import axios from "axios";
 // import Pro from '../component/doubtForm';
+import { LoginContext } from "../contexts/LoginContext";
 const socket = io.connect(`${process.env.REACT_APP_SOCKET_BASE_URL}`);
 
 const categories = {
@@ -22,11 +24,51 @@ const categories = {
   ],
 };
 function StudentDoubt() {
-
+  const { userno, setUserno } = useContext(LoginContext);
+  const [pic, setPic] = useState();
   const [selectedCategory, setSelectedCategory] = useState('Electrician');
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [quantities, setQuantities] = useState([]);
   const [price, setPrice] = useState(null);
+
+  const postDetails = async (pics) => {
+    let result;
+    console.log(pics);
+    if (pics.type === "image/jpeg" || pics.type === "image/png") {
+      const data = new FormData();
+      data.append("file", pics);
+      data.append("upload_preset", "chat_app");
+
+      return (
+        axios
+          .post(
+            'https://api.cloudinary.com/v1_1/dqclqq2jy/image/upload/',
+            data,
+            {
+              onUploadProgress: (ProgressEvent) => {},
+            }
+          )
+          //.then((res) => res.json())
+
+          .then(({ data }) => {
+            data.secure_url = "" + data.secure_url;
+            //setPic(data.secure_url.toString());
+            console.log(data.url.toString());
+            setPic(data.url.toString());
+            console.log("UPLOAD COMLETE: " + JSON.stringify(result));
+
+          console.log(pic)
+          })
+          .catch((err) => {
+            console.log(err);
+           
+          })
+      );
+    } else {
+     
+      return;
+    }
+  };
 
   const handleCategoryChange = (event) => {
     const newCategory = event.target.value;
@@ -63,12 +105,6 @@ function StudentDoubt() {
     return totalPrice;
   };
 
-  // const onClickHandler = (event) => {
-  //   event.preventDefault();
-  //   setPrice(calculateTotalPrice(selectedOptions, quantities));
-  //   console.log(`Submitted data: ${selectedCategory},${JSON.stringify(selectedOptions)},${quantities},${price}`);
-  // };
-
   useEffect(() => {
     console.log(`Updated data: ${selectedCategory},${JSON.stringify(selectedOptions)},${price}`);
   }, [selectedCategory, selectedOptions, price]);
@@ -102,13 +138,13 @@ function StudentDoubt() {
     const a = JSON.stringify(selectedOptions);
     const b = JSON.stringify(quantities);
     console.log(a);
-    socket.emit("questionAsked", { selectedCategory, studentId, lat, lon, a, b, price, question });
+    socket.emit("questionAsked", { selectedCategory, studentId, lat, lon, a, b, price, question,pic });
     setQuestion("");
     // resultRef.current.innerText = "Waiting for handymen to accept...";
   };
 
-  function handleAccept(teacherId, studentId) {
-    socket.emit('moveToChatStudent', { studentId, teacherId });
+  function handleAccept(teacherId, studentId,price,question,selectedCategory) {
+    socket.emit('moveToChatStudent', { studentId, teacherId,price,question,selectedCategory });
     setQuestion("");
   };
 
@@ -118,9 +154,26 @@ function StudentDoubt() {
     );
   }
 
+  socket.on('movetoHome',() => {
+    console.log("move to home");
+    let u=JSON.parse(localStorage.getItem("user"));
+    u.messages=[];
+    u.data=[];
+    localStorage.setItem("user",JSON.stringify(u));
+    setUserno(2);
+    navigate("/");
+  });
+
   socket.on('moveToChat', (payload) => {
     console.log("moving to chat");
-    navigate("/chat", { state: { value1: payload.studentId, value2: payload.teacherId } });
+    let m = JSON.parse(localStorage.getItem("user"));
+    m.data.push(payload.studentId);
+    m.data.push(payload.teacherId);
+    m.data.push(payload.price);
+    m.data.push(payload.question);
+    m.data.push(payload.selectedCategory);
+    localStorage.setItem("user", JSON.stringify(m));
+    navigate("/chat");
   });
 
   return (
@@ -128,7 +181,6 @@ function StudentDoubt() {
       <div className="flex justify-center text-4xl p-6 font-semibold">
         ASK FOR SERVICE
       </div>
-      {/* <div><Pro /></div> */}
 
       <form className="flex flex-col justify-evenly h-1/2 gap-[2rem] pb-20" onSubmit={sendQuestion}>
         <div className="flex flex-col space-x-4 mt-11">
@@ -191,6 +243,13 @@ function StudentDoubt() {
               setQuestion(e.target.value);
             }}
           />
+          <input
+            className="w-[60%] mx-auto border border-black rounded-lg p-4 m-4"
+            type="file"
+            p={1.5}
+            accept="image/*"
+            onChange={(e) => postDetails(e.target.files[0])}
+          />
           <div className="my-4 flex justify-center items-center">
             <button
               type="submit"
@@ -212,46 +271,8 @@ function StudentDoubt() {
         </div>
       </form>
 
-      {/* <div className="flex justify-center w-full p-6">
-        <header
-          className="App-header border-black bg-slate-200 rounded-2xl p-12 shadow-xl"
-          ref={resultRef}
-        >
-          <form onSubmit={sendQuestion}>
-            <input
-              className="border-black rounded-lg p-4 m-4"
-              type="text"
-              name="chat"
-              placeholder="domain"
-              value={question}
-              onChange={(e) => {
-                setQuestion(e.target.value);
-              }}
-            />
-            <button
-              type="submit"
-              className=" rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 sm:w-auto"
-            >
-              ASK
-            </button>
-          </form>
-        </header>
-      </div> */}
+      
       <div>
-        {/* <ul>
-          {rates.map((rate) => (
-            <li key={rate._id}>
-              Fare: {rate.payload.fare}
-              {!rate.accepted && (
-                <>
-                  <button onClick={() => handleAccept(rate.payload.teacherId, rate.payload.studentId)}>Accept</button>
-                  <button onClick={() => handleDecline(rate.payload.teacherId)}>Decline</button>
-                </>
-              )}
-            </li>
-          ))}
-        </ul> */}
-
         <ul>
           {[...new Set(rates.map(rate => rate.payload.fare))].map((uniqueFare) => {
             const uniqueRate = rates.find(rate => rate.payload.fare === uniqueFare);
@@ -260,7 +281,7 @@ function StudentDoubt() {
                 Fare: {uniqueRate.payload.fare}
                 {!uniqueRate.accepted && (
                   <>
-                    <button onClick={() => handleAccept(uniqueRate.payload.teacherId, uniqueRate.payload.studentId, uniqueRate.payload.fare, question)}>Accept</button>
+                    <button onClick={() => handleAccept(uniqueRate.payload.teacherId, uniqueRate.payload.studentId, uniqueRate.payload.fare, question,selectedCategory)}>Accept</button>
                     <button onClick={() => handleDecline(uniqueRate.payload.teacherId)}>Decline</button>
                   </>
                 )}

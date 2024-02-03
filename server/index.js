@@ -8,6 +8,7 @@ const userRoute = require("./routes/userRoutes");
 const agoraRoute = require("./routes/agoraRoute");
 const paymentRoute = require("./routes/paymentRoute");
 const questionRoute=require("./routes/ratingRoute");
+const serviceRoute=require('./routes/serviceRoute')
 // FOR PAYMENT GATWAY
 const path = require("path");
 const shortid = require("shortid");
@@ -34,6 +35,7 @@ app.use("/user", userRoute);
 app.use("/agora", agoraRoute);
 app.use("/payment", paymentRoute);
 app.use("/ask",questionRoute);
+app.use("/service", serviceRoute);
 
 
 

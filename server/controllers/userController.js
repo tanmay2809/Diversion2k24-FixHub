@@ -126,8 +126,39 @@ const generateJwt = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30m" });
 };
 
+
+// Controller to handle saving Cloudinary image URL to user schema
+const saveImage = async (req, res) => {
+  try {
+    const { userId } = req.params; // Assuming userId is passed in the request params
+    const { imageUrl } = req.body; // Assuming imageUrl is sent in the request body
+
+    const user = await  userModel .findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Add Cloudinary image URL to user schema
+    user.profileImage = imageUrl;
+
+    // Save user with updated profile image URL
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ message: "Image URL saved successfully", imageUrl });
+  } catch (err) {
+    console.error("Error saving image URL:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
 module.exports = {
   login,
   register,
-  getMe
+  getMe,
+  saveImage,
 };

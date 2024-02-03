@@ -84,15 +84,19 @@ const ChatApp = () => {
   const navigate = useNavigate()
   console.log(JSON.parse(localStorage.getItem("user")));
   let m = JSON.parse(localStorage.getItem("user")).messages;
+  let data = JSON.parse(localStorage.getItem("user")).data;
+  const sid= data[0];
+  const tid = data[1];
+
   const [messages, setMessages] = useState(m);
   const [inputValue, setInputValue] = useState("");
   const location = useLocation();
-  const { userno, setUserno, sid, tid } = useContext(LoginContext);
-  const sidd = sid
-  console.log(sid)
+  const { userno, setUserno } = useContext(LoginContext);
+  // const sidd = sid
+  // console.log(sid)
   // console.log(location.state)
-  const tidd = tid
-  console.log(tid)
+  // const tidd = tid
+  // console.log(tid)
   const id_c = JSON.parse(localStorage.getItem("user")).id;
   console.log(id_c)
   const socket = io("http://localhost:4000");
@@ -109,10 +113,7 @@ const ChatApp = () => {
       document.body.appendChild(script);
     });
   }
-  const ssid = location.state?.value1;
-  console.log("sid",sid)
-  const ttid = location.state?.value2;
-  console.log("tid",tid);
+
   useEffect(() => {
     setUserno(1);
 
@@ -186,11 +187,15 @@ const ChatApp = () => {
   function finishhandler(e) {
     e.preventDefault();
     let u = JSON.parse(localStorage.getItem("user"));
+    console.log("finish handler : ",u.data);
+    console.log("data0",u.data[0]);
+    socket.emit("moveToHomeHandymen",u.data[0]);
     u.messages = [];
     setMessages(u.messages);
+    u.data=[];
     localStorage.setItem("user", JSON.stringify(u));
     setUserno(2);
-    navigate("/");
+    
   }
 
   return (
@@ -222,14 +227,14 @@ const ChatApp = () => {
             Send
           </button>
           <div>
-            {id_c == ssid && (
+            {id_c == tid && (
               <button onClick={finishhandler} className="bg-[#333] py-[1rem] m-[0.25rem] rounded-md px-6  text-white">
                 Finish
               </button>
             )}
           </div>
           <div>
-            {id_c === ttid && (
+            {id_c === sid && (
               <button
                 onClick={handlePayment}
                 className="bg-[#333] py-[1rem] m-[0.25rem] rounded-md px-5 text-white"

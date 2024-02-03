@@ -39,7 +39,7 @@ function TeacherDoubt() {
 
   useEffect(() => {
     socket.emit("teacherOnline", { teacherId });
-
+    
     return () => {
       socket.emit("teacherOffline");
     };
@@ -52,6 +52,8 @@ function TeacherDoubt() {
     const quantities = payload.quantities;
     const price = payload.price;
     const question = payload.question;
+    const pic=payload.pic;
+    // console.log("pic url",pic);
     const user_lat = payload.lat;
     const user_lon = payload.lon;
     let lat = '';
@@ -73,7 +75,7 @@ function TeacherDoubt() {
           console.log(typeof(quantities));
           console.log(typeof(options));
           if (((JSON.parse(localStorage.getItem("user")).skills)).includes(selectedCategory)) {
-            setQuestions([...questions, { studentId, question, dist, price, options, quantities }]);
+            setQuestions([...questions, { studentId, question, dist, price, options, quantities,pic }]);
           }
           else {
             socket.emit("teacherOffline");
@@ -89,12 +91,11 @@ function TeacherDoubt() {
     }
     console.log("lat: ", lat, "lon : ", lon);
     console.log("userlat: ", user_lat, "userlon : ", user_lon);
-    // await setDist(getDistanceFromLatLonInKm(user_lat, user_lon, lat, lon));
 
     console.log("new question ", question, studentId);
     if (dist == '') {
       if ((JSON.parse(localStorage.getItem("user")).skills).includes(selectedCategory)) {
-        setQuestions([...questions, { studentId, question, dist }]);
+        setQuestions([...questions, { studentId, question, dist,price, options, quantities,pic}]);
       }
       else {
         socket.emit("teacherOffline");
@@ -113,6 +114,15 @@ function TeacherDoubt() {
         return true;
       }),
     ]);
+  });
+
+  socket.on("movetoHome",() => {
+    console.log("move to home");
+    let u=JSON.parse(localStorage.getItem("user"));
+    u.messages=[];
+    u.data=[];
+    localStorage.setItem("user",JSON.stringify(u));
+    navigate("/");
   });
 
   const handleAnswer = (e, studentId,price,question,selectedCategory) => {
@@ -140,9 +150,21 @@ function TeacherDoubt() {
     socket.emit("raiseRates", { studentId, teacherId, fare });
   };
 
+  const handleViewImage = (imageUrl) => {
+    console.log("Open the image URL in a new tab"); 
+    window.open(imageUrl, '_blank');
+  };
+
   socket.on('moveToChat', (payload) => {
     console.log("moving to chat");
-    navigate("/chat", { state: { value1: payload.studentId, value2: payload.teacherId,value3:payload.price,value4: payload.question } });
+    let m = JSON.parse(localStorage.getItem("user"));
+    m.data.push(payload.studentId);
+    m.data.push(payload.teacherId);
+    m.data.push(payload.price);
+    m.data.push(payload.question);
+    m.data.push(payload.selectedCategory);
+    localStorage.setItem("user", JSON.stringify(m));
+    navigate("/chat");
   });
 
   return (
@@ -189,6 +211,10 @@ function TeacherDoubt() {
                     />
                     <div className="p-2 border border-black  bg-[#969090] ">Price : {questionObj.price}</div>
                     <div className="w-full bg-[#969090] p-2">Distance : {questionObj.dist}</div>
+                    {/* <div className="p-3 bg-white pointer" onClick={handleViewImage(questionObj.pic)}>
+                        View Image
+                    </div> */}
+                    <img src={questionObj.pic} height={300} width={400}></img>
                     <div className="flex mt-2">
                       <button
                         className="bg-green-500 text-white p-2 m-2 w-24 rounded-full "
