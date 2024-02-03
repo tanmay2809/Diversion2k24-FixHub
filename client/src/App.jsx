@@ -7,21 +7,20 @@ import Header from "./component/Header";
 import Footer from "./component/Footer";
 import SignUp from "./page/SignUp";
 import Login from "./page/Login";
-import Profile from "./page/Profiletut";
-import Profilestudent from "./page/Profilestudent";
+import Profile from "./page/ProfileHandymen";
+import ProfileUser from "./page/ProfileUser";
 import Pricing from "./component/Pricing";
 import { LoginContext } from "./contexts/LoginContext";
 import ProtectedRoutes from "./component/ProtectedRoute";
-import ProtectedStudRoutes from "./component/ProtectedStudRoute";
-import ProtectedTeachRoutes from "./component/ProtectedTeachRoute";
-import Signuptut from "./page/Signuptut";
-import Feedbackpage from "./component/Feedbackpage";
-import TutorLogin from "./page/TutorLogin";
-import StudentDoubt from "./page/StudentDoubt";
-import TeacherDoubt from "./page/TeacherDoubt";
-import VideoComponent from "./component/VideoComponent";
+import ProtectedUserRoute from "./component/ProtectedUserRoute";
+import ProtectedHandymenRoute from "./component/ProtectedHandymenRoute";
+import SignupHandymen from "./page/SignupHandymen";
+import HandymenLogin from "./page/HandymenLogin";
+import UserRequest from "./page/UserRequest";
+import HandymenRequest from "./page/HandymenRequest";
 import { useNavigate } from "react-router-dom";
 import ChatApp from "./page/Chat";
+import ProfileHandymen from "./page/ProfileHandymen";
 function App() {
     const [userno, setUserno] = useState(0);
     // const[sid , setSid]=useState("");
@@ -31,9 +30,6 @@ function App() {
     JSON.parse(localStorage.getItem("user"))?.isAuthed || false
   );
   const [userSkills, setUserSkills] = useState(
-    JSON.parse(localStorage.getItem("user"))?.name || ""
-  );
-  const [userEdu, setUserEdu] = useState(
     JSON.parse(localStorage.getItem("user"))?.name || ""
   );
   const [userId, setUserId] = useState(
@@ -71,8 +67,8 @@ function App() {
           setIsLoggedIn,
           userSkills,
           setUserSkills,
-          userEdu,
-          setUserEdu,
+          // userEdu,
+          // setUserEdu,
           userName,
           setUserName,
           userEmail,
@@ -88,25 +84,23 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/tutor/login" element={<TutorLogin />} />
+          <Route path="/handymen/login" element={<HandymenLogin />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/signuptut" element={<Signuptut />} />
+          <Route path="/signupHandymen" element={<SignupHandymen />} />
           <Route element={<ProtectedRoutes />}>
-            <Route element={<ProtectedStudRoutes />}>
-              <Route path="/profilestudent" element={<Profilestudent />} />
+            <Route element={<ProtectedUserRoute />}>
+              <Route path="/profileUser" element={<ProfileUser />} />
               {/* <Route path="/doubt" element={<Doubt />} /> */}
-              <Route path="/doubt" element={<StudentDoubt />} />
-              <Route path="/feedback" element={<Feedbackpage />} />
+              <Route path="/requestService" element={<UserRequest />} />
             </Route>
-            <Route element={<ProtectedTeachRoutes />}>
-              <Route path="/profileteacher" element={<Profile />} />
+            <Route element={<ProtectedHandymenRoute />}>
+              <Route path="/profileHandymen" element={<ProfileHandymen />} />
             {/* <Route path="/doubtSection" element={<DoubtRender />} /> */}
-              <Route path="/doubtSection" element={<TeacherDoubt />} />
+              <Route path="/serviceSection" element={<HandymenRequest />} />
             </Route>
             <Route path="/pricing" element={<Pricing />} />
           </Route>
           <Route path="/chat" element={<ChatApp />}></Route>
-          <Route path="/video" element={<VideoComponent />} />
         </Routes>
         {/* <Feedbackpage /> */}
         {/* <Footer /> */}

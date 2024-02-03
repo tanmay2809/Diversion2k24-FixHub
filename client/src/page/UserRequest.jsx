@@ -23,7 +23,7 @@ const categories = {
     { name: 'Wall Area (per sq. metres)', price: 15 },
   ],
 };
-function StudentDoubt() {
+function UserRequest() {
   const { userno, setUserno } = useContext(LoginContext);
   const [pic, setPic] = useState();
   const [selectedCategory, setSelectedCategory] = useState('Electrician');
@@ -109,7 +109,7 @@ function StudentDoubt() {
     console.log(`Updated data: ${selectedCategory},${JSON.stringify(selectedOptions)},${price}`);
   }, [selectedCategory, selectedOptions, price]);
 
-  const studentId = JSON.parse(localStorage.getItem("user")).id;
+  const userId = JSON.parse(localStorage.getItem("user")).id;
   const authToken = localStorage.getItem("token");
   const [question, setQuestion] = useState("");
   const resultRef = useRef();
@@ -117,7 +117,7 @@ function StudentDoubt() {
   const [rates, setRates] = useState([]);
   useEffect(() => {
   }, []);
-  socket.emit("studentConnected", { studentId });
+  socket.emit("studentConnected", { userId });
 
   socket.on("raiseFare", (payload) => {
     console.log(JSON.parse(localStorage.getItem("user")));
@@ -132,25 +132,25 @@ function StudentDoubt() {
     setPrice(calculateTotalPrice(selectedOptions, quantities));
     console.log("local storage : ", JSON.parse(localStorage.getItem("user")));
     console.log(`Submitted data: ${selectedCategory},${JSON.stringify(selectedOptions)},${quantities},${price}`);
-    console.log("questionAsked", question, studentId, selectedCategory);
+    console.log("questionAsked", question, userId, selectedCategory);
     const lat = JSON.parse(localStorage.getItem("user")).lat;
     const lon = JSON.parse(localStorage.getItem("user")).lon;
     const a = JSON.stringify(selectedOptions);
     const b = JSON.stringify(quantities);
     console.log(a);
-    socket.emit("questionAsked", { selectedCategory, studentId, lat, lon, a, b, price, question,pic });
+    socket.emit("questionAsked", { selectedCategory, userId, lat, lon, a, b, price, question,pic });
     setQuestion("");
     // resultRef.current.innerText = "Waiting for handymen to accept...";
   };
 
-  function handleAccept(teacherId, studentId,price,question,selectedCategory) {
-    socket.emit('moveToChatStudent', { studentId, teacherId,price,question,selectedCategory });
+  function handleAccept(handymenId, userId,price,question,selectedCategory) {
+    socket.emit('moveToChatStudent', { userId, handymenId,price,question,selectedCategory });
     setQuestion("");
   };
 
-  function handleDecline(teacherId) {
+  function handleDecline(handymenId) {
     setRates((prevRates) =>
-      prevRates.filter((rate) => rate.teacherId == teacherId)
+      prevRates.filter((rate) => rate.handymenId == handymenId)
     );
   }
 
@@ -167,8 +167,8 @@ function StudentDoubt() {
   socket.on('moveToChat', (payload) => {
     console.log("moving to chat");
     let m = JSON.parse(localStorage.getItem("user"));
-    m.data.push(payload.studentId);
-    m.data.push(payload.teacherId);
+    m.data.push(payload.userId);
+    m.data.push(payload.handymenId);
     m.data.push(payload.price);
     m.data.push(payload.question);
     m.data.push(payload.selectedCategory);
@@ -281,8 +281,8 @@ function StudentDoubt() {
                 Fare: {uniqueRate.payload.fare}
                 {!uniqueRate.accepted && (
                   <>
-                    <button onClick={() => handleAccept(uniqueRate.payload.teacherId, uniqueRate.payload.studentId, uniqueRate.payload.fare, question,selectedCategory)}>Accept</button>
-                    <button onClick={() => handleDecline(uniqueRate.payload.teacherId)}>Decline</button>
+                    <button onClick={() => handleAccept(uniqueRate.payload.handymenId, uniqueRate.payload.userId, uniqueRate.payload.fare, question,selectedCategory)}>Accept</button>
+                    <button onClick={() => handleDecline(uniqueRate.payload.handymenId)}>Decline</button>
                   </>
                 )}
               </li>
@@ -294,4 +294,4 @@ function StudentDoubt() {
   );
 }
 
-export default StudentDoubt;
+export default UserRequest;

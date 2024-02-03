@@ -6,8 +6,8 @@ import { io } from "socket.io-client";
 
 const socket = io.connect(`${process.env.REACT_APP_SOCKET_BASE_URL}`);
 
-function TeacherDoubt() {
-  const teacherId = JSON.parse(localStorage.getItem("user")).id;
+function HandymenRequest() {
+  const handymenId = JSON.parse(localStorage.getItem("user")).id;
   const authToken = localStorage.getItem("token");
   const [questions, setQuestions] = useState([]);
   const [fare, setFare] = useState('');
@@ -38,7 +38,7 @@ function TeacherDoubt() {
   }
 
   useEffect(() => {
-    socket.emit("teacherOnline", { teacherId });
+    socket.emit("teacherOnline", { handymenId });
     
     return () => {
       socket.emit("teacherOffline");
@@ -46,12 +46,12 @@ function TeacherDoubt() {
   }, []);
 
   socket.on("questionAvailable", async (payload) => {
-    const studentId = payload.studentId;
+    const userId = payload.userId;
     const selectedCategory = payload.selectedCategory;
     const options = payload.options;
     const quantities = payload.quantities;
     const price = payload.price;
-    const question = payload.question;
+    const service = payload.service;
     const pic=payload.pic;
     // console.log("pic url",pic);
     const user_lat = payload.lat;
@@ -75,7 +75,7 @@ function TeacherDoubt() {
           console.log(typeof(quantities));
           console.log(typeof(options));
           if (((JSON.parse(localStorage.getItem("user")).skills)).includes(selectedCategory)) {
-            setQuestions([...questions, { studentId, question, dist, price, options, quantities,pic }]);
+            setQuestions([...questions, { userId, service, dist, price, options, quantities,pic }]);
           }
           else {
             socket.emit("teacherOffline");
@@ -92,10 +92,10 @@ function TeacherDoubt() {
     console.log("lat: ", lat, "lon : ", lon);
     console.log("userlat: ", user_lat, "userlon : ", user_lon);
 
-    console.log("new question ", question, studentId);
+    console.log("new service ", service, userId);
     if (dist == '') {
       if ((JSON.parse(localStorage.getItem("user")).skills).includes(selectedCategory)) {
-        setQuestions([...questions, { studentId, question, dist,price, options, quantities,pic}]);
+        setQuestions([...questions, { userId, service, dist,price, options, quantities,pic}]);
       }
       else {
         socket.emit("teacherOffline");
@@ -104,11 +104,11 @@ function TeacherDoubt() {
   });
 
   socket.on("removeQuestion", async (payload) => {
-    const studentId = payload.studentId;
-    console.log(` ${studentId} question answered by someone else`);
+    const userId = payload.userId;
+    console.log(` ${userId} service answered by someone else`);
     setQuestions([
       ...questions.filter((questionObj) => {
-        if (questionObj.studentId === studentId) {
+        if (questionObj.userId === userId) {
           return false;
         }
         return true;
@@ -125,17 +125,17 @@ function TeacherDoubt() {
     navigate("/");
   });
 
-  const handleAnswer = (e, studentId,price,question,selectedCategory) => {
+  const handleAnswer = (e, userId,price,service,selectedCategory) => {
     e.preventDefault();
-    socket.emit("moveToChatTeacher", { studentId, teacherId,price,question,selectedCategory });
+    socket.emit("moveToChatTeacher", { userId, handymenId,price,service,selectedCategory });
     setQuestions([]);
   };
 
-  const handleDecline = (e, studentId) => {
+  const handleDecline = (e, userId) => {
     e.preventDefault();
     setQuestions(
       questions.filter((question) => {
-        if (question.studentId === studentId) {
+        if (question.userId === userId) {
           return false;
         }
         return true;
@@ -143,11 +143,11 @@ function TeacherDoubt() {
     );
   };
 
-  const handleRaise = (e, studentId, fare) => {
+  const handleRaise = (e, userId, fare) => {
     e.preventDefault();
     console.log("local storage data ", JSON.parse(localStorage.getItem("user")));
-    console.log("handle rates function", studentId, "  ", teacherId, "  ", fare);
-    socket.emit("raiseRates", { studentId, teacherId, fare });
+    console.log("handle rates function", userId, "  ", handymenId, "  ", fare);
+    socket.emit("raiseRates", { userId, handymenId, fare });
   };
 
   const handleViewImage = (imageUrl) => {
@@ -158,10 +158,10 @@ function TeacherDoubt() {
   socket.on('moveToChat', (payload) => {
     console.log("moving to chat");
     let m = JSON.parse(localStorage.getItem("user"));
-    m.data.push(payload.studentId);
-    m.data.push(payload.teacherId);
+    m.data.push(payload.userId);
+    m.data.push(payload.handymenId);
     m.data.push(payload.price);
-    m.data.push(payload.question);
+    m.data.push(payload.service);
     m.data.push(payload.selectedCategory);
     localStorage.setItem("user", JSON.stringify(m));
     navigate("/chat");
@@ -181,16 +181,16 @@ function TeacherDoubt() {
                 <div className="flex justify-center">
                   <div
                     className="question p-10 flex-col border bg-slate-900 rounded-xl m-1"
-                    key={questionObj.studentId}
-                    studentId={questionObj.studentId}
+                    key={questionObj.userId}
+                    userId={questionObj.userId}
                   >
                     <div className="text-white p-2 pl-0">Question:</div>
                     <textarea
                       className="p-4 rounded-xl"
                       type="text"
                       name="chat"
-                      placeholder="type question"
-                      value={questionObj.question}
+                      placeholder="type service"
+                      value={questionObj.service}
                       readOnly={true}
                     />
                     <textarea
@@ -218,13 +218,13 @@ function TeacherDoubt() {
                     <div className="flex mt-2">
                       <button
                         className="bg-green-500 text-white p-2 m-2 w-24 rounded-full "
-                        onClick={(e) => handleAnswer(e, questionObj.studentId,questionObj.price,questionObj.question,questionObj.selectedCategory)}
+                        onClick={(e) => handleAnswer(e, questionObj.userId,questionObj.price,questionObj.service,questionObj.selectedCategory)}
                       >
                         Accept
                       </button>
                       <button
                         className="bg-red-500 text-white p-2 m-2 ml-0 w-24 rounded-full"
-                        onClick={(e) => handleDecline(e, questionObj.studentId)}
+                        onClick={(e) => handleDecline(e, questionObj.userId)}
                       >
                         Decline
                       </button>
@@ -237,7 +237,7 @@ function TeacherDoubt() {
                           className="block w-[70%] rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                           required
                           onChange={(e) => setFare(e.target.value)} placeholder="Enter the rate"></input>
-                        <button onClick={(e) => handleRaise(e, questionObj.studentId, fare)} className="bg-[#ffffff] px-3 py-1 rounded-md">Send</button>
+                        <button onClick={(e) => handleRaise(e, questionObj.userId, fare)} className="bg-[#ffffff] px-3 py-1 rounded-md">Send</button>
                       </form>
                     </div>
                   </div>
@@ -252,4 +252,4 @@ function TeacherDoubt() {
   );
 }
 
-export default TeacherDoubt;
+export default HandymenRequest;

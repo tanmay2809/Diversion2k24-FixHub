@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
 import { LoginContext } from "../contexts/LoginContext";
+import Pricing from "../component/Pricing";
 
-const Profiletut = () => {
+const ProfileHandymen = () => {
   const { userName } = useContext(LoginContext);
   const { userEmail } = useContext(LoginContext);
   const { userEdu } = useContext(LoginContext);
@@ -41,16 +42,17 @@ const Profiletut = () => {
               <div class="rounded-3xl border w-full p-10 m-4 text-black shadow-xl">
                 <p class="mb-3">Email: {userEmail}</p>
                 <p class="mb-3"> Skills: {userSkills}</p>
-                <p class="mb-3">Education: {userEdu} </p>
+                {/* <p class="mb-3">Education: {userEdu} </p> */}
                 <p class="mb-3">Ratings: 3.5</p>
-                <p class="mb-3"> Doubt Solved: 20</p>
+                {/* <p class="mb-3"> Doubt Solved: 20</p> */}
               </div>
             </div>
           </div>
         </div>
       </div>
+      <Pricing />
     </>
   );
 };
 
-export default Profiletut;
+export default ProfileHandymen;

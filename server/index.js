@@ -3,11 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const errorMiddleware = require("./middleware/errorMiddleware");
 const connection = require("./database/db");
-const teacherRoute = require("./routes/teacherRoute");
+const handymenRoute = require("./routes/handymenRoute");
 const userRoute = require("./routes/userRoutes");
-const agoraRoute = require("./routes/agoraRoute");
 const paymentRoute = require("./routes/paymentRoute");
-const questionRoute=require("./routes/ratingRoute");
 const serviceRoute=require('./routes/serviceRoute')
 // FOR PAYMENT GATWAY
 const path = require("path");
@@ -30,14 +28,10 @@ app.get("/", (req, res) => {
   res.send("hello!!!!");
 });
 
-app.use("/teacher", teacherRoute);
+app.use("/handymen", handymenRoute);
 app.use("/user", userRoute);
-app.use("/agora", agoraRoute);
 app.use("/payment", paymentRoute);
-app.use("/ask",questionRoute);
 app.use("/service", serviceRoute);
-
-
 
 app.use(errorMiddleware);
 

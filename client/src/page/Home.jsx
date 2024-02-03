@@ -39,14 +39,14 @@ const Home = () => {
             Elevate your handyman career – sign up now for a world of opportunities and clients seeking your expertise!
             </h1>
             <button
-              onClick={() => navigate("/signuptut")}
+              onClick={() => navigate("/signupHandymen")}
               className="bg-[#EAB308] text-[#000000]  py-[4px] px-[24px] rounded-md font-mullish font-bold
           hover:bg-lightBlue500 transition-all duration-200 text-lg sm:mt-0 m-3"
             >
               SignUp as Handymen
             </button>
             <button
-              onClick={() => navigate("/tutor/login")}
+              onClick={() => navigate("/handymen/login")}
               className="bg-[#EAB308] text-[#000000] w-[150px] py-[18px] px-[18px] rounded-md font-mullish font-bold
           hover:bg-lightBlue500 transition-all duration-200  text-lg sm:mt-0 m-3"
             >
