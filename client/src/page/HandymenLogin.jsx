@@ -136,7 +136,7 @@ const def = {
   password: "",
 };
 
-const TutorLogin = () => {
+const HandymenLogin = () => {
   const [loginstate, setLoginState] = useState(def);
   const {
     setUserName,
@@ -169,7 +169,7 @@ const TutorLogin = () => {
       redirect: "follow",
     };
 
-    fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/teacher/login`, requestOptions)
+    fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/handymen/login`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log(result);
@@ -179,7 +179,7 @@ const TutorLogin = () => {
         setUserId(result._id);
         setUserEmail(result.email);
         setUserSkills(result.skills);
-        setUserEdu(result.education);
+        // setUserEdu(result.education);
         localStorage.setItem("token", result.token);
         localStorage.setItem(
           "user",
@@ -194,7 +194,7 @@ const TutorLogin = () => {
             data:[],
           })
         );
-        navigate("/profileteacher");
+        navigate("/profileHandymen");
       })
       .catch((error) => console.log("error", error));
 
@@ -203,14 +203,14 @@ const TutorLogin = () => {
   return (
     <>
       <div className="m-0 flex h-[550px] max-w-full items-center justify-center rounded-md bg-slate-200">
-        <div className="md:h-[350px] md:w-[350px] lg:h-[400px] lg:w-[400px]">
-          <h2 className="mb-4 text-2xl font-semibold ">LOGIN AS A handymen</h2>
+        <div className="md:h-[350px] ring-4  ring-lightGray  rounded-md shadow-2xl p-10 md:w-[350px] lg:h-[400px] lg:w-[400px]">
+          <h2 className="mb-4 text-3xl font-semibold ">LOGIN </h2>
 
-          <form>
+           <form>
             <div className="mb-6">
               <label
                 htmlFor="email"
-                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                className="mb-2 block text-base font-medium text-gray-900 dark:text-white"
               >
                 Your email
               </label>
@@ -227,7 +227,7 @@ const TutorLogin = () => {
             <div className="mb-6">
               <label
                 htmlFor="password"
-                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                className="mb-2 block text-base font-medium text-gray-900 dark:text-white"
               >
                 Your password
               </label>
@@ -241,9 +241,10 @@ const TutorLogin = () => {
               />
             </div>
             <div className="mb-6"></div>
-            <button
+           <button
               type="submit"
-              className="w-full rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 sm:w-auto"
+              className="bg-[#EAB308] w-full text-[#000000]  py-[14px] px-[18px] rounded-md font-mullish font-bold
+          hover:bg-lightBlue500 transition-all duration-200 focus:outline-none focus:ring-4  "
               onClick={(e) => handleSubmit(e)}
             >
               Login
@@ -255,5 +256,5 @@ const TutorLogin = () => {
   );
 };
 
-export default TutorLogin;
+export default HandymenLogin;
 

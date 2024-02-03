@@ -1,78 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import io from 'socket.io-client';
-// import { useLocation } from 'react-router-dom';
-// const ChatApp = () => {
-//   const [messages, setMessages] = useState([]);
-//   const [inputValue, setInputValue] = useState('');
-
-//   const location = useLocation();
-
-//   const sid = location.state?.value1;
-//   console.log("sid",sid)
-//   const tid = location.state?.value2;
-//   console.log("tid",tid);
-
-//   const id_c = JSON.parse(localStorage.getItem("user")).id;
-//   console.log("user : ",id_c);
-//   const socket = io("http://localhost:4000");
-
-//   useEffect(() => {
-//     // Listen for incoming messages
-//     socket.on('chat message', (msg) => {
-//       setMessages((prevMessages) => [...prevMessages, msg]);
-//       window.scrollTo(0, document.body.scrollHeight);
-//     });
-
-//     // Clean up socket connection when component unmounts
-//     return () => {
-//       socket.disconnect();
-//     };
-//   }, []);
-
-//   const handleFormSubmit = (e) => {
-//     e.preventDefault();
-//     if(inputValue) {
-//       socket.emit('chat message', inputValue);
-//       setInputValue('');
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <div className='m-0 pb-3 my-20'>
-//         <ul id="messages" className='odd:bg-white even:bg-slate-50'>
-//           {messages.map((msg, index) => (
-//             <li key={index} className='odd:bg-white even:bg-[#929191]'>{msg}</li>
-//           ))}
-//         </ul>
-//         <form id="form" className='bg-[#b8b6b6] p-[0.25rem] fixed bottom-0 left-0 right-0 flex f-[3rem]'>
-//           <input
-//             id="input"
-//             autoComplete="off"
-//             value={inputValue}
-//             onChange={(e) => setInputValue(e.target.value)}
-//             className='m-0.25rem py-[1rem] rounded-md w-[78%] placeholder:mx-3'
-//           />
-//           <button type="submit" onClick={handleFormSubmit} className='bg-[#333] py-[1rem] m-[0.25rem] rounded-md w-[10%] text-white'>Send</button>
-//           <div>
-//           {id_c == sid && 
-//             <button className='bg-[#333] py-[1rem] m-[0.25rem] rounded-md px-6  text-white'>Finsih</button>
-//           }
-//           </div>
-//           <div>
-//           {id_c == tid && 
-//             <button className='bg-[#333] py-[1rem] m-[0.25rem] rounded-md px-5 text-white'>Make Payment</button>
-//           }
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-// export default ChatApp;
-
-
-
 import React, { useState, useEffect, useContext } from "react";
 import io from "socket.io-client";
 import axios from "axios";
@@ -92,11 +17,6 @@ const ChatApp = () => {
   const [inputValue, setInputValue] = useState("");
   const location = useLocation();
   const { userno, setUserno } = useContext(LoginContext);
-  // const sidd = sid
-  // console.log(sid)
-  // console.log(location.state)
-  // const tidd = tid
-  // console.log(tid)
   const id_c = JSON.parse(localStorage.getItem("user")).id;
   console.log(id_c)
   const socket = io("http://localhost:4000");
@@ -195,6 +115,7 @@ const ChatApp = () => {
     u.data=[];
     localStorage.setItem("user", JSON.stringify(u));
     setUserno(2);
+    navigate("/")
     
   }
 

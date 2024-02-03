@@ -1,19 +1,19 @@
 const expressAsyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const tutorModel = require("../models/tutorSchema");
+const handymen = require("../models/handymenSchema");
 
 // @desc : register new user
 // @route: POST /users/register
 // @access: public
-const registerTeacher = expressAsyncHandler(async (req, res) => {
-  const { name, email, password, skills, education } = req.body;
-  console.log(name, email, password, skills, education)
-  if (!name || !email || !password || !skills || !education) {
+const registerHandymen = expressAsyncHandler(async (req, res) => {
+  const { name, email, password, skills } = req.body;
+  console.log(name, email, password, skills)
+  if (!name || !email || !password || !skills ) {
     res.status(400);
     throw new Error("Enter all details");
   }
-  const tutorExists = await tutorModel.findOne({ email });
+  const tutorExists = await handymen.findOne({ email });
   if (tutorExists) {
     res.status(400);
     throw new Error("tutor already Exists");
@@ -21,21 +21,19 @@ const registerTeacher = expressAsyncHandler(async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPass = await bcrypt.hash(password, salt);
 
-  const tutor = await tutorModel.create({
+  const tutor = await handymen.create({
     name,
     email,
     password: hashedPass,
     skills,
-    education,
   });
 
   res.json({
     _id: tutor._id,
     name: tutor.name,
     email: tutor.email,
-    type: "tutor",
+    type: "handymen",
     skills: tutor.skills,
-    education: tutor.education,
     token: generateJwt(tutor._id),
   });
 });
@@ -43,13 +41,13 @@ const registerTeacher = expressAsyncHandler(async (req, res) => {
 // @desc : login as user
 // @route: POST /users/login
 // @access: public
-const loginTeacher = expressAsyncHandler(async (req, res) => {
+const loginHandymen = expressAsyncHandler(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     res.status(400);
     throw new Error("Enter all details");
   }
-  const tutor = await tutorModel.findOne({
+  const tutor = await handymen.findOne({
     email,
   });
   if (tutor && (await bcrypt.compare(password, tutor.password))) {
@@ -57,10 +55,10 @@ const loginTeacher = expressAsyncHandler(async (req, res) => {
       _id: tutor.id,
       name: tutor.name,
       email: tutor.email,
-      type: "tutor",
+      type: "handymen",
       token: generateJwt(tutor.id),
       skills: tutor.skills,
-      education: tutor.education,
+  
     });
   } else {
     res.status(400);
@@ -71,15 +69,15 @@ const loginTeacher = expressAsyncHandler(async (req, res) => {
 // @desc : details of loggedin user
 // @route: GET /users/me
 // @access: private
-const getTeacher = expressAsyncHandler(async (req, res) => {
-  const { name, email, _id, skills, education } = req.user;
+const getHandymen = expressAsyncHandler(async (req, res) => {
+  const { name, email, _id, skills} = req.user;
   res.status(200).json({
     id: _id,
     name,
     email,
-    type: "tutor",
+    type: "handymen",
     skills,
-    education,
+  
   });
 });
 
@@ -88,7 +86,7 @@ const generateJwt = (id) => {
 };
 
 module.exports = {
-  registerTeacher,
-  loginTeacher,
-  getTeacher,
+  registerHandymen,
+  loginHandymen,
+  getHandymen,
 };

@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import Pricing from "../component/Pricing";
 import { LoginContext } from "../contexts/LoginContext";
 
-const Profilestudent = () => {
+const ProfileUser = () => {
   const { userName } = useContext(LoginContext);
   const { userEmail } = useContext(LoginContext);
   // const { user } = useContext(LoginContext);
@@ -38,7 +38,6 @@ const Profilestudent = () => {
             <div class="m-4 flex justify-center p-4 bg- w-full">
               <div class="rounded-3xl border w-full p-10 m-4 text-black shadow-xl">
                 <p class="mb-3">Email: {userEmail}</p>
-                <p class="mb-3">Doubt left: 10</p>
               </div>
             </div>
           </div>
@@ -49,4 +48,4 @@ const Profilestudent = () => {
   );
 };
 
-export default Profilestudent;
+export default ProfileUser;

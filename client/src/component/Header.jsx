@@ -39,11 +39,12 @@ const Header = () => {
                 CodeHelp
               </span> */}
             </div>
-            <div class="flex md:order-2">
+            <div className="flex md:order-2">
               {isLoggedIn ? (
                 <div>
                   <button
-                    className="text-md px-6 py-3 font-semibold text-blue-600 transition-all hover:text-blue-700 disabled:bg-gray-400"
+                    className="bg-[#EAB308] text-[#000000]  py-[14px] px-[18px] rounded-md font-mullish font-bold
+          hover:bg-lightBlue500 transition-all duration-200"
                     onClick={() => handleLogOut()}
                   >
                     Logout
@@ -52,13 +53,15 @@ const Header = () => {
               ) : (
                 <div>
                   <button
-                    className="text-md px-4 sm-hidden py-3 font-semibold text-blue-600 transition-all hover:text-blue-700 disabled:bg-gray-400"
+                    className="bg-[#EAB308] text-[#000000]  py-[10px] px-[18px] rounded-md font-mullish font-bold
+          hover:bg-lightBlue500 transition-all duration-200"
                     onClick={() => navigate("/login")}
                   >
                     Login
                   </button>
                   <button
-                    className="text-md sm-hidden rounded-full bg-blue-600 px-4 py-2 font-medium text-white transition-all hover:bg-blue-700 disabled:bg-gray-400"
+                    className="bg-[#EAB308] text-[#000000]  ml-3 py-[10px] px-[28px] rounded-md font-mullish font-bold
+          hover:bg-lightBlue500 transition-all duration-200"
                     onClick={() => navigate("/signup")}
                   >
                     Sign Up
@@ -90,9 +93,9 @@ const Header = () => {
               </button>
 
               <div
-                class={`absolute top-10 cursor-pointer ${
+                class={`absolute top-16 cursor-pointer ${
                   hamOpen ? "right-0 " : "right-[-300px]"
-                } z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
+                } z-10 mt-2 w-56 origin-top-right rounded-md bg-[#ffffff] shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="menu-button"
@@ -111,15 +114,15 @@ const Header = () => {
                     <li
                       class="hover:bg-gray-200 py-4 px-6 w-full"
                       onClick={() => {
-                        navigate("/doubt");
+                        navigate("/requestService");
                       }}
                     >
-                      <div>Ask a Doubt</div>
+                      <div>Request Service</div>
                     </li>
                   ) : (
                     <li
                       class="hover:bg-gray-200 py-4 px-6 w-full"
-                      onClick={() => navigate("/doubtSection")}
+                      onClick={() => navigate("/serviceSection")}
                     >
                       <div>Services</div>
                     </li>
@@ -127,7 +130,7 @@ const Header = () => {
                   <li
                     class="hover:bg-gray-200 py-4 px-6 w-full"
                     onClick={() => {
-                      navigate("/profilestudent");
+                      navigate("/profileUser");
                     }}
                   >
                     <div>Profile</div>
@@ -154,26 +157,26 @@ const Header = () => {
                 {userType === "user" ? (
                   <li>
                     <div
-                      onClick={() => navigate("/doubt")}
+                      onClick={() => navigate("/requestService")}
                       class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                     >
-                      Ask div Doubt
+                      Request Service
                     </div>
                   </li>
                 ) : (
                   <li>
                     <div
-                      onClick={() => navigate("/doubtSection")}
+                      onClick={() => navigate("/serviceSection")}
                       class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                     >
-                      Doubts-T
+                      Request Service
                     </div>
                   </li>
                 )}
                 {userType === "user" ? (
                   <li>
                     <div
-                      onClick={() => navigate("/profilestudent")}
+                      onClick={() => navigate("/profileUser")}
                       class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                     >
                       Profile
@@ -182,7 +185,7 @@ const Header = () => {
                 ) : (
                   <li>
                     <div
-                      onClick={() => navigate("/profileteacher")}
+                      onClick={() => navigate("/profileHandymen")}
                       class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                     >
                       Profile
