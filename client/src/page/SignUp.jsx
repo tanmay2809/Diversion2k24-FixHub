@@ -61,6 +61,7 @@ const Signup = () => {
             pincode: result.pincode,
             lat: result.lat,
             lon: result.lon,
+            messages : [],
           })
         );
         navigate("/profilestudent");

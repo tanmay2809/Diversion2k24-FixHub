@@ -56,6 +56,7 @@ const Login = () => {
             pincode: result.pincode,
             lat: result.lat,
             lon: result.lon,
+            messages:[],
           })
         );
 

@@ -4,40 +4,20 @@ import { io } from "socket.io-client";
 import ChatApp from "./Chat";
 import { LoginContext } from "../contexts/LoginContext";
 
-// import { useNavigate } from "react-router-dom";
-
 const socket = io.connect(`${process.env.REACT_APP_SOCKET_BASE_URL}`);
 
 function TeacherDoubt() {
-    const { userno, setUserno ,tid,setid} = useContext(LoginContext);
+    const { userno, setUserno } = useContext(LoginContext);
   const teacherId = JSON.parse(localStorage.getItem("user")).id;
   const authToken = localStorage.getItem("token");
   const [questions, setQuestions] = useState([]);
   const [fare, setFare] = useState('');
-  // const [lat,setLat] = useState('');
-  // const[lon,setLon] = useState('');
-  // const [dist,setDist] = useState('');
 
   const navigate = useNavigate();
 
   function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     console.log(lat1, " : ", lon1);
     console.log(lat2, " : ", lon2);
-    // var R = 6371; // Radius of the earth in km
-    // function deg2rad(deg) {
-    //   return deg * (Math.PI / 180);
-    // }
-    // var dLat = deg2rad(lat2 - lat1); // deg2rad below
-    // var dLon = deg2rad(lon2 - lon1);
-    // var a =
-    //   Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    //   Math.cos(deg2rad(lat1)) *
-    //   Math.cos(deg2rad(lat2)) *
-    //   Math.sin(dLon / 2) *
-    //   Math.sin(dLon / 2);
-    // var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    // var d = R * c; // Distance in km
-    // var ans = Math.round(d * 100) / 100;
     const R = 6371; // Earth radius in kilometers
 
     const toRad = (value) => (value * Math.PI) / 180;
@@ -52,9 +32,6 @@ function TeacherDoubt() {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     const distanceInKm = R * c;
-
-    // setDistance(distanceInKm.toFixed(2));
-
     return distanceInKm.toFixed(2);
   }
 
@@ -81,8 +58,6 @@ function TeacherDoubt() {
           console.log("lat ", latitude, "lon ", longitude);
           lat = latitude;
           lon = longitude;
-          // setLat(latitude);
-          // setLon(longitude);
           dist = getDistanceFromLatLonInKm( user_lat , user_lon, lat, lon);
           console.log("distance : ",dist);
           if ((JSON.parse(localStorage.getItem("user")).skills).includes(question)) {
@@ -159,7 +134,7 @@ function TeacherDoubt() {
     console.log({
       state: { value1: payload.studentId, value2: payload.teacherId },
     });
-    setid(payload.teacherId);
+    //settid(payload.teacherId);
     navigate("/chat", { state: { value1: payload.studentId, value2: payload.teacherId } });
   });
 

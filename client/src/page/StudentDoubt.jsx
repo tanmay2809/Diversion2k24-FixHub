@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext,  useRef } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { LoginContext } from "../contexts/LoginContext";
@@ -11,10 +11,10 @@ function StudentDoubt() {
   const resultRef = useRef();
   const navigate = useNavigate();
   const [rates, setRates] = useState([]);
-   const { userno, setUserno ,sid ,setsid } = useContext(LoginContext);
+  const { userno, setUserno,  } = useContext(LoginContext);
   useEffect(() => {
-  
-  },[]);
+
+  }, []);
   socket.emit("studentConnected", { studentId });
 
   socket.on("raiseFare", (payload) => {
@@ -27,17 +27,17 @@ function StudentDoubt() {
 
   const sendQuestion = (e) => {
     e.preventDefault();
-    console.log("local storage : ",JSON.parse(localStorage.getItem("user")));
+    console.log("local storage : ", JSON.parse(localStorage.getItem("user")));
     console.log("questionAsked", question, studentId);
     const lat = JSON.parse(localStorage.getItem("user")).lat;
     const lon = JSON.parse(localStorage.getItem("user")).lon;
-    socket.emit("questionAsked", { question, studentId,lat,lon });
+    socket.emit("questionAsked", { question, studentId, lat, lon });
     setQuestion("");
     resultRef.current.innerText = "Waiting for handymen to accept...";
   };
 
-  function handleAccept(teacherId,studentId) {
-    socket.emit('moveToChatStudent', { studentId,teacherId });
+  function handleAccept(teacherId, studentId, fare, quest) {
+    socket.emit('moveToChatStudent', { studentId, teacherId, fare, quest });
     setQuestion("");
   };
 
@@ -47,11 +47,11 @@ function StudentDoubt() {
     );
   }
 
-  socket.on('moveToChat',(payload)=>{
+  socket.on('moveToChat', (payload) => {
     console.log("moving to chat");
     setUserno(1);
-    setsid(payload.studentId); 
-    navigate("/chat",{ state: { value1: payload.studentId, value2: payload.teacherId }});
+    //setSid(payload.studentId);
+    navigate("/chat", { state: { value1: payload.studentId, value2: payload.teacherId } });
   });
 
   return (
@@ -86,17 +86,20 @@ function StudentDoubt() {
       </div>
       <div>
         <ul>
-          {rates.map((rate) => (
-            <li key={rate._id}>
-              Fare: {rate.payload.fare}
-              {!rate.accepted && (
-                <>
-                  <button onClick={() => handleAccept(rate.payload.teacherId,rate.payload.studentId)}>Accept</button>
-                  <button onClick={() => handleDecline(rate.payload.teacherId)}>Decline</button>
-                </>
-              )}
-            </li>
-          ))}
+          {[...new Set(rates.map(rate => rate.payload.fare))].map((uniqueFare) => {
+            const uniqueRate = rates.find(rate => rate.payload.fare === uniqueFare);
+            return (
+              <li key={uniqueRate._id}>
+                Fare: {uniqueRate.payload.fare}
+                {!uniqueRate.accepted && (
+                  <>
+                    <button onClick={() => handleAccept(uniqueRate.payload.teacherId, uniqueRate.payload.studentId, uniqueRate.payload.fare, question)}>Accept</button>
+                    <button onClick={() => handleDecline(uniqueRate.payload.teacherId)}>Decline</button>
+                  </>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

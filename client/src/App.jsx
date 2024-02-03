@@ -24,8 +24,8 @@ import { useNavigate } from "react-router-dom";
 import ChatApp from "./page/Chat";
 function App() {
     const [userno, setUserno] = useState(0);
-    const[sid , setsid]=useState("");
-       const [tid, setid] = useState("");
+    // const[sid , setSid]=useState("");
+    //    const [tid, settid] = useState("");
     const navigate = useNavigate()
   const [isLoggedIn, setIsLoggedIn] = useState(
     JSON.parse(localStorage.getItem("user"))?.isAuthed || false
@@ -64,10 +64,7 @@ function App() {
   return (
       <LoginContext.Provider
         value={{
-          sid,           
-          setsid,
-          tid , 
-          setid,
+       
           userno,
           setUserno,
           isLoggedIn,

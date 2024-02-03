@@ -17,7 +17,6 @@ const def = {
 };
 
 const Signuptut = () => {
-  
   const [selected, setSelected] = useState([]);
 
   const ashu = selected.map((e) => {
@@ -73,6 +72,7 @@ const Signuptut = () => {
             isAuthed: true,
             type: result.type,
             skills: ashu,
+            messages:[],
           })
         );
         navigate("/profileteacher");

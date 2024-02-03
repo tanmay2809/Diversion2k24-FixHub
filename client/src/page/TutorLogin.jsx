@@ -61,6 +61,7 @@ const TutorLogin = () => {
             type: result.type,
             skills: result.skills,
             email: result.email,
+            messages : [],
           })
         );
         navigate("/profileteacher");

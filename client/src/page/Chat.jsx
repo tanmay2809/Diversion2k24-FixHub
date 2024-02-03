@@ -1,4 +1,4 @@
-import React, { useState, useEffect , useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import io from "socket.io-client";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
@@ -7,16 +7,14 @@ import { LoginContext } from "../contexts/LoginContext";
 
 const ChatApp = () => {
   const navigate = useNavigate()
-  const [messages, setMessages] = useState([]);
+  console.log(JSON.parse(localStorage.getItem("user")));
+  let m = JSON.parse(localStorage.getItem("user")).messages;
+  const [messages, setMessages] = useState(m);
   const [inputValue, setInputValue] = useState("");
   const location = useLocation();
- const { userno, setUserno ,sid , tid } = useContext(LoginContext);
-  //const {sidd} = location?.state?.value1
-  //console.log(sidd)
-  console.log(sid)
-  console.log(location.state)
-  const tidd =tid
-  console.log(tid)
+  const { userno, setUserno, } = useContext(LoginContext);
+const sid = location.value?.state1;
+const tid =location.value?.state2;
   const id_c = JSON.parse(localStorage.getItem("user")).id;
   console.log(id_c)
   const socket = io("http://localhost:4000");
@@ -33,12 +31,20 @@ const ChatApp = () => {
       document.body.appendChild(script);
     });
   }
-
+  const ssid = location.state?.value1;
+  console.log("sid",sid)
+  const ttid = location.state?.value2;
+  console.log("tid",tid);
   useEffect(() => {
-      setUserno(1);
+    setUserno(1);
 
     socket.on("chat message", (msg) => {
-      setMessages((prevMessages) => [...prevMessages, msg]);
+      let u = JSON.parse(localStorage.getItem("user"));
+      console.log("user", u);
+      console.log("messages : ", m);
+      u.messages.push(msg);
+      setMessages(u.messages);
+      localStorage.setItem("user", JSON.stringify(u));
       window.scrollTo(0, document.body.scrollHeight);
     });
     return () => {
@@ -55,11 +61,11 @@ const ChatApp = () => {
   };
 
   const handlePayment = async (e) => {
-     e.preventDefault();
-  const res = await loadScript(
-       "https://checkout.razorpay.com/v1/checkout.js"
-     );
- 
+    e.preventDefault();
+    const res = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+
     try {
       const { data } = await axios.post(
         "http://localhost:5000/payment/razorpay",
@@ -91,19 +97,24 @@ const ChatApp = () => {
       };
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
-      
+
     } catch (error) {
       console.log(error);
     }
     setUserno(2);
-    navigate("/")
+    navigate("/");
   };
-function finishhandler(e)
-{
-  e.preventDefault();
-   setUserno(2);
-   navigate("/");
-}
+
+  function finishhandler(e) {
+    e.preventDefault();
+    let u = JSON.parse(localStorage.getItem("user"));
+    u.messages = [];
+    setMessages(u.messages);
+    localStorage.setItem("user", JSON.stringify(u));
+    setUserno(2);
+    navigate("/");
+  }
+
   return (
     <div>
       <div className="m-0 pb-3 my-20">
