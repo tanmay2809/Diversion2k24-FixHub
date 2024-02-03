@@ -1,13 +1,12 @@
-import { useState, useEffect  , useContext } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
-import ChatApp from "./Chat";
-import { LoginContext } from "../contexts/LoginContext";
+// import ChatApp from "./Chat";
+// import { useNavigate } from "react-router-dom";
 
 const socket = io.connect(`${process.env.REACT_APP_SOCKET_BASE_URL}`);
 
 function TeacherDoubt() {
-    const { userno, setUserno } = useContext(LoginContext);
   const teacherId = JSON.parse(localStorage.getItem("user")).id;
   const authToken = localStorage.getItem("token");
   const [questions, setQuestions] = useState([]);
@@ -32,6 +31,9 @@ function TeacherDoubt() {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     const distanceInKm = R * c;
+
+    // setDistance(distanceInKm.toFixed(2));
+
     return distanceInKm.toFixed(2);
   }
 
@@ -43,14 +45,18 @@ function TeacherDoubt() {
     };
   }, []);
 
-  socket.on("questionAvailable", async(payload) => {
+  socket.on("questionAvailable", async (payload) => {
     const studentId = payload.studentId;
+    const selectedCategory = payload.selectedCategory;
+    const options = payload.options;
+    const quantities = payload.quantities;
+    const price = payload.price;
     const question = payload.question;
     const user_lat = payload.lat;
     const user_lon = payload.lon;
     let lat = '';
     let lon = '';
-    let dist='';
+    let dist = '';
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -58,10 +64,16 @@ function TeacherDoubt() {
           console.log("lat ", latitude, "lon ", longitude);
           lat = latitude;
           lon = longitude;
-          dist = getDistanceFromLatLonInKm( user_lat , user_lon, lat, lon);
-          console.log("distance : ",dist);
-          if ((JSON.parse(localStorage.getItem("user")).skills).includes(question)) {
-            setQuestions([...questions, { studentId, question, dist }]);
+          // setLat(latitude);
+          // setLon(longitude);
+          dist = getDistanceFromLatLonInKm(user_lat, user_lon, lat, lon);
+          console.log("distance : ", dist);
+          console.log("handymen : ", (JSON.parse(localStorage.getItem("user")).skills));
+          console.log("asked ", selectedCategory);
+          console.log(typeof(quantities));
+          console.log(typeof(options));
+          if (((JSON.parse(localStorage.getItem("user")).skills)).includes(selectedCategory)) {
+            setQuestions([...questions, { studentId, question, dist, price, options, quantities }]);
           }
           else {
             socket.emit("teacherOffline");
@@ -71,7 +83,7 @@ function TeacherDoubt() {
           console.error('Error getting location:', error.message);
         }
       );
-    } 
+    }
     else {
       console.error('Geolocation is not supported by your browser');
     }
@@ -80,14 +92,14 @@ function TeacherDoubt() {
     // await setDist(getDistanceFromLatLonInKm(user_lat, user_lon, lat, lon));
 
     console.log("new question ", question, studentId);
-    if(dist==''){
-    if ((JSON.parse(localStorage.getItem("user")).skills).includes(question)) {
-      setQuestions([...questions, { studentId, question, dist }]);
+    if (dist == '') {
+      if ((JSON.parse(localStorage.getItem("user")).skills).includes(selectedCategory)) {
+        setQuestions([...questions, { studentId, question, dist }]);
+      }
+      else {
+        socket.emit("teacherOffline");
+      }
     }
-    else {
-      socket.emit("teacherOffline");
-    }
-  }
   });
 
   socket.on("removeQuestion", async (payload) => {
@@ -103,9 +115,9 @@ function TeacherDoubt() {
     ]);
   });
 
-  const handleAnswer = (e, studentId) => {
+  const handleAnswer = (e, studentId,price,question,selectedCategory) => {
     e.preventDefault();
-    socket.emit("moveToChatTeacher", { studentId, teacherId });
+    socket.emit("moveToChatTeacher", { studentId, teacherId,price,question,selectedCategory });
     setQuestions([]);
   };
 
@@ -130,12 +142,7 @@ function TeacherDoubt() {
 
   socket.on('moveToChat', (payload) => {
     console.log("moving to chat");
-    setUserno(1)
-    console.log({
-      state: { value1: payload.studentId, value2: payload.teacherId },
-    });
-    //settid(payload.teacherId);
-    navigate("/chat", { state: { value1: payload.studentId, value2: payload.teacherId } });
+    navigate("/chat", { state: { value1: payload.studentId, value2: payload.teacherId,value3:payload.price,value4: payload.question } });
   });
 
   return (
@@ -164,11 +171,28 @@ function TeacherDoubt() {
                       value={questionObj.question}
                       readOnly={true}
                     />
+                    <textarea
+                      className="p-4 rounded-xl"
+                      type="text"
+                      name="chat"
+                      placeholder="filteredOptions"
+                      value={questionObj.options}
+                      readOnly={true}
+                    />
+                    <textarea
+                      className="p-4 rounded-xl"
+                      type="text"
+                      name="chat"
+                      placeholder="quantity : "
+                      value={questionObj.quantities}
+                      readOnly={true}
+                    />
+                    <div className="p-2 border border-black  bg-[#969090] ">Price : {questionObj.price}</div>
                     <div className="w-full bg-[#969090] p-2">Distance : {questionObj.dist}</div>
                     <div className="flex mt-2">
                       <button
                         className="bg-green-500 text-white p-2 m-2 w-24 rounded-full "
-                        onClick={(e) => handleAnswer(e, questionObj.studentId)}
+                        onClick={(e) => handleAnswer(e, questionObj.studentId,questionObj.price,questionObj.question,questionObj.selectedCategory)}
                       >
                         Accept
                       </button>
@@ -193,6 +217,7 @@ function TeacherDoubt() {
                   </div>
                 </div>
               );
+              
             })}
           </div>
         </div>

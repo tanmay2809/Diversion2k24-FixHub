@@ -20,12 +20,26 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("questionAsked", (payload) => {
-    question = payload.question;
+    console.log("payload : ",payload);
+    selectedCategory = payload.selectedCategory;
     studentId = payload.studentId;
     lat = payload.lat;
     lon = payload.lon;
+    options = payload.a;
+    quantities = payload.b;
+    price=payload.price;
+    question=payload.question;
+    let filteredOptions =[];
+    let filteredQuantities=[];
+    // if (Array.isArray(options) && Array.isArray(quantities) && options.length === quantities.length) {
+    //    filteredOptions = options.filter((_, index) => quantities[index] !== 0);
+    //    filteredQuantities = quantities.filter(quantity => quantity !== 0);
+    // }
+    // let filteredOptions = options.filter((_, index) => quantities[index] !== 0);
+    // let filteredQuantities = quantities.filter(quantity => quantity !== 0);
     console.log(`question asked by ${studentId}: ${question}`);
-    socket.to("tutors").emit("questionAvailable", { studentId, question,lat,lon });
+    console.log( studentId, selectedCategory,lat,lon,options,quantities,price,question );
+    socket.to("tutors").emit("questionAvailable", { studentId, selectedCategory,lat,lon,options,quantities,price,question });
   });
 
   //if conn with a teacher socket
@@ -57,9 +71,9 @@ io.on("connection", async (socket) => {
   });
 
   socket.on('moveToChatTeacher',(payload)=> {
-    const {studentId,teacherId} = payload;
+    const {studentId,teacherId,price,question} = payload;
     io.to("tutors").emit("removeQuestion", { studentId });
-    io.to(teacherId).to(studentId).emit('moveToChat', { studentId,teacherId });
+    io.to(teacherId).to(studentId).emit('moveToChat', { studentId,teacherId,price,question });
   });
 
   socket.on('chat message', (msg) => {
