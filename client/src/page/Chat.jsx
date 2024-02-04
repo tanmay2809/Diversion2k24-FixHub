@@ -10,8 +10,11 @@ const ChatApp = () => {
   console.log(JSON.parse(localStorage.getItem("user")));
   let m = JSON.parse(localStorage.getItem("user")).messages;
   let data = JSON.parse(localStorage.getItem("user")).data;
+  console.log(JSON.parse(localStorage.getItem("user")).data)
   const sid= data[0];
   const tid = data[1];
+  const fare = data[2];
+  const service_type= data[4];
 
   const [messages, setMessages] = useState(m);
   const [inputValue, setInputValue] = useState("");
@@ -104,21 +107,35 @@ const ChatApp = () => {
     navigate("/");
   };
 
-  function finishhandler(e) {
+const finishhandler = async(e)=> {
     e.preventDefault();
-    let u = JSON.parse(localStorage.getItem("user"));
-    console.log("finish handler : ",u.data);
-    console.log("data0",u.data[0]);
-    socket.emit("moveToHomeHandymen",u.data[0]);
-    u.messages = [];
-    setMessages(u.messages);
-    u.data=[];
-    localStorage.setItem("user", JSON.stringify(u));
-    setUserno(2);
-    navigate("/")
-    
-  }
+          try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
 
+      const { data } = await axios.post(
+        "http://localhost:5000/service/postService ",
+        { sid, tid, fare , service_type },
+        config
+      );
+      console.log(data)
+     let u = JSON.parse(localStorage.getItem("user"));
+     console.log("finish handler : ", u.data);
+     console.log("data0", u.data[0]);
+     socket.emit("moveToHomeHandymen", u.data[0]);
+     u.messages = [];
+     setMessages(u.messages);
+     u.data = [];
+     localStorage.setItem("user", JSON.stringify(u));
+     setUserno(2);
+     navigate("/")
+    } catch (error) {
+      console.log(error)
+    };
+  }
   return (
     <div>
       <div className="m-0 pb-3 my-20">
