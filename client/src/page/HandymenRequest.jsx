@@ -52,7 +52,8 @@ function HandymenRequest() {
     const quantities = payload.quantities;
     const price = payload.price;
     const service = payload.service;
-    const pic=payload.pic;
+    const pic = payload.pic;
+    // const question = payload.question;
     // console.log("pic url",pic);
     const user_lat = payload.lat;
     const user_lon = payload.lon;
@@ -169,24 +170,25 @@ function HandymenRequest() {
 
   return (
     <>
-      <div className="App h-full w-full p-6">
-        <div className="flex justify-center text-4xl p-6 font-semibold">
+       <div className="App  p-6">
+        <div className="flex flex-col items-center  p-6 leading-10 text-5xl font-bold">
           LIVE SERVICES
+          <div className="w-28 h-1 mt-4  bg-[#EAB308]"></div>
         </div>
         <div className="flex justify-center">
           {/* <h3 className="text-4xl text-black font-semibold m-4">Incoming Doubts</h3> */}
-          <div className="App-header w-1/2 bg-slate-300 p-12">
+          <div className=" bg-deepBlue App-header w-[400px] p-5 bg-slate-300 text-[#ffffff] ">
             {questions.map((questionObj) => {
               return (
                 <div className="flex justify-center">
                   <div
-                    className="question p-10 flex-col border bg-slate-900 rounded-xl m-1"
+                    className="question px-[12px] py-5 flex-col border-[#ffffff] bg-slate-900 rounded-xl m-1 text-[#000000] "
                     key={questionObj.userId}
                     userId={questionObj.userId}
                   >
-                    <div className="text-white p-2 pl-0">Question:</div>
+                    <div className="text-[#ffffff] p-2 pl-0">Problem:</div>
                     <textarea
-                      className="p-4 rounded-xl"
+                      className="w-full p-2 bg-[#b5d0f6] rounded-md"
                       type="text"
                       name="chat"
                       placeholder="type service"
@@ -194,7 +196,7 @@ function HandymenRequest() {
                       readOnly={true}
                     />
                     <textarea
-                      className="p-4 rounded-xl"
+                      className="w-full p-2 bg-[#b5d0f6] rounded-md"
                       type="text"
                       name="chat"
                       placeholder="filteredOptions"
@@ -202,43 +204,49 @@ function HandymenRequest() {
                       readOnly={true}
                     />
                     <textarea
-                      className="p-4 rounded-xl"
+                      className="w-full p-2 bg-[#b5d0f6] rounded-md"
                       type="text"
                       name="chat"
                       placeholder="quantity : "
                       value={questionObj.quantities}
                       readOnly={true}
                     />
-                    <div className="p-2 border border-black  bg-[#969090] ">Price : {questionObj.price}</div>
-                    <div className="w-full bg-[#969090] p-2">Distance : {questionObj.dist}</div>
+                    <div className="text-[#ffffff] p-2 pl-0">Distance</div>
+                    <div className=" bg-[#b5d0f6] mt-3  p-2 rounded-md mb-3">{questionObj.dist}</div>
+                    <div className="text-[#ffffff] p-2 pl-0">Price:</div>
+                    <div className=" bg-[#b5d0f6] mt-3  p-2 rounded-md mb-3"> {questionObj.price}</div>
+                   
                     {/* <div className="p-3 bg-white pointer" onClick={handleViewImage(questionObj.pic)}>
                         View Image
                     </div> */}
-                    <img src={questionObj.pic} height={300} width={400}></img>
-                    <div className="flex mt-2">
+                    <img src={questionObj.pic} height={200} width={400}></img>
+                    <div className="flex justify-around mt-2">
                       <button
-                        className="bg-green-500 text-white p-2 m-2 w-24 rounded-full "
+                        className="bg-[#28aa7a] text-[#ffffff] p-2 mb-2 w-32 rounded-full "
                         onClick={(e) => handleAnswer(e, questionObj.userId,questionObj.price,questionObj.service,questionObj.selectedCategory)}
                       >
                         Accept
                       </button>
                       <button
-                        className="bg-red-500 text-white p-2 m-2 ml-0 w-24 rounded-full"
+                        className="bg-[#ad2626] text-[#ffffff] p-2 mb-2 ml-0 w-32 rounded-full"
                         onClick={(e) => handleDecline(e, questionObj.userId)}
                       >
                         Decline
                       </button>
                     </div>
                     <div>
-                      <form className="flex flex-row gap-1">
+                      <form className="flex mt-2 flex-row gap-1">
                         <input type="text"
                           name="fare"
                           id="fare"
-                          className="block w-[70%] rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                          className="placeholder-[#3e7f99] block w-[90%] rounded-lg border border-gray-300 bg-[#b5d0f6] p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                           required
                           onChange={(e) => setFare(e.target.value)} placeholder="Enter the rate"></input>
-                        <button onClick={(e) => handleRaise(e, questionObj.userId, fare)} className="bg-[#ffffff] px-3 py-1 rounded-md">Send</button>
+                        <button onClick={(e) => handleRaise(e, questionObj.userId, fare)} className="bg-[#EAB308] text-[#000000] w-[40%] py-[14px] px-[18px] rounded-md font-mullish font-bold
+          hover:bg-lightBlue500 transition-all duration-200">Send</button>
+                        
                       </form>
+                      <div className="w-[350px] h-1 mt-4  bg-gray2"></div>
                     </div>
                   </div>
                 </div>
