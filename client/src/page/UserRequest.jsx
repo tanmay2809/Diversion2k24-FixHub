@@ -45,7 +45,7 @@ function UserRequest() {
             'https://api.cloudinary.com/v1_1/dqclqq2jy/image/upload/',
             data,
             {
-              onUploadProgress: (ProgressEvent) => {},
+              onUploadProgress: (ProgressEvent) => { },
             }
           )
           //.then((res) => res.json())
@@ -55,17 +55,17 @@ function UserRequest() {
             //setPic(data.secure_url.toString());
             console.log(data.url.toString());
             setPic(data.url.toString());
-            console.log("UPLOAD COMLETE: " + JSON.stringify(result));
+            console.log("UPLOAD COMPLETE: " + JSON.stringify(result));
 
-          console.log(pic)
+            console.log(pic)
           })
           .catch((err) => {
             console.log(err);
-           
+
           })
       );
     } else {
-     
+
       return;
     }
   };
@@ -138,28 +138,28 @@ function UserRequest() {
     const a = JSON.stringify(selectedOptions);
     const b = JSON.stringify(quantities);
     console.log(a);
-    socket.emit("questionAsked", { selectedCategory, userId, lat, lon, a, b, price, service ,pic });
+    socket.emit("questionAsked", { selectedCategory, userId, lat, lon, a, b, price, service, pic });
     setQuestion("");
     // resultRef.current.innerText = "Waiting for handymen to accept...";
   };
 
-  function handleAccept(handymenId, userId,price, service,selectedCategory) {
-    socket.emit('moveToChatStudent', { userId, handymenId,price, service,selectedCategory });
+  function handleAccept(handymenId, userId, price, service, selectedCategory) {
+    socket.emit('moveToChatStudent', { userId, handymenId, price, service, selectedCategory });
     setQuestion("");
   };
 
   function handleDecline(handymenId) {
     setRates((prevRates) =>
-      prevRates.filter((rate) => rate.handymenId == handymenId)
+      prevRates.filter((rate) => rate.handymenId === handymenId)
     );
   }
 
-  socket.on('movetoHome',() => {
+  socket.on('movetoHome', () => {
     console.log("move to home");
-    let u=JSON.parse(localStorage.getItem("user"));
-    u.messages=[];
-    u.data=[];
-    localStorage.setItem("user",JSON.stringify(u));
+    let u = JSON.parse(localStorage.getItem("user"));
+    u.messages = [];
+    u.data = [];
+    localStorage.setItem("user", JSON.stringify(u));
     setUserno(2);
     navigate("/");
   });
@@ -184,113 +184,133 @@ function UserRequest() {
 
       <form className="flex flex-col justify-evenly h-1/2 gap-[2rem] pb-20" onSubmit={sendQuestion}>
         <div className="flex flex-col space-x-4 mt-11">
-          <div className="">
-            <label htmlFor="category" className="font-bold">
-              Choose the service type
-            </label>
-            <br />
-            <select
-              className="... ring-2 ring-inset ring-gray-800 w-36 rounded-md mt-3 px-3 py-2 text-center"
-              name="category"
-              id="category"
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-            >
-              {Object.keys(categories).map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
-          {selectedCategory &&
-            categories[selectedCategory].map((item, index) => (
-              <div key={item.name} className="flex flex-row items-center mt-4">
-                <div className="w-3/4 mr-4">
-                  <input
-                    type="text"
-                    value={item.name}
-                    readOnly
-                    className="bg-gray-200 rounded-md px-3 py-2 text-center"
-                  />
-                </div>
-                <div className="w-1/4 flex items-center space-x-4">
-                  <select
-                    value={selectedOptions[index] || ''}
-                    onChange={(e) => handleOptionChange(index, e)}
-                  // className="w-20 border-slate-900 outline-double rounded-md px-2 py-1 text-center"
-                  >
-                    {/* <option value="">Select</option> */}
-                  </select>
-                  <input
-                    type="number"
-                    min={0}
-                    value={quantities[index] || ''}
-                    onChange={(e) => handleQuantityChange(index, e)}
-                    className="w-20 border-slate-900 outline-double rounded-md px-2 py-1 text-center"
-                    placeholder="0"
-                  />
-                </div>
+          <div className="p-4 border-2 w-[40%] mx-auto shadow-md">
+            <div className="flex justify-center mx-auto ">
+              <div className="">
+                <label htmlFor="category" className="font-bold p-2 text-xl">
+                  Choose the service type
+                </label>
+                <select
+                  className="... ring-2 ring-inset ring-gray-800 rounded-md mt-3 w-32 p-1 text-lg text-center"
+                  name="category"
+                  id="category"
+                  value={selectedCategory}
+                  onChange={handleCategoryChange}
+                >
+                  {Object.keys(categories).map((category) => (
+                    <option key={category} value={category} className="text-xl">
+                      {category}
+                    </option>
+                  ))}
+                </select>
               </div>
-            ))}
-          <input
-            className="w-[60%] mx-auto border border-black rounded-lg p-4 m-4"
+            </div>
+            <div className="">
+              {selectedCategory &&
+                categories[selectedCategory].map((item, index) => (
+                  <div key={item.name} className="flex flex-row items-center justify-center mt-4 border w-[332px] ml-[100px]">
+                    <div className="mr-4">
+                      <input
+                        type="text"
+                        value={item.name}
+                        readOnly
+                        className="px-3 py-2 text-center"
+                      />
+                    </div>
+                    <div className="flex space-x-4">
+                      <select
+                        value={selectedOptions[index] || ''}
+                        onChange={(e) => handleOptionChange(index, e)}
+                      // className="w-20 border-slate-900 outline-double rounded-md px-2 py-1 text-center"
+                      >
+                        {/* <option value="">Select</option> */}
+                      </select>
+                      <input
+                        type="number"
+                        min={0}
+                        value={quantities[index] || ''}
+                        onChange={(e) => handleQuantityChange(index, e)}
+                        className="w-20 border-md p-1 text-center"
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                ))}
+            </div>
+          <textarea
+            className="w-[342px]  h-20 mt-4 flex justify-center mx-auto border"
             type="text"
             name="chat"
-            placeholder="domain"
+            placeholder="describe your problem"
             value={service}
             onChange={(e) => {
               setQuestion(e.target.value);
             }}
           />
+        <div>
           <input
-            className="w-[60%] mx-auto border border-black rounded-lg p-4 m-4"
+            className="w-[342px] h-16 flex justify-center mx-auto border  p-4 m-4"
             type="file"
             p={1.5}
             accept="image/*"
             onChange={(e) => postDetails(e.target.files[0])}
-          />
-          <div className="my-4 flex justify-center items-center">
+          />
+        </div>
+            </div>
+        <div className="mt-4 flex justify-center space-x-20">
+          <div className="">
             <button
               type="submit"
-              className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+              className="bg-[#EAB308] text-[#000000]  ml-3 py-[10px] px-[28px] rounded-md font-bold
+          hover:bg-lightBlue500 transition-all duration-200"
               onClick={sendQuestion}
             >
               Submit
             </button>
           </div>
-          <div className="mt-4">
+          <div className="">
             <label className="font-bold">Total Price:</label>
             <input
               type="text"
               value={price}
               readOnly
-              className="bg-gray-200 rounded-md px-3 py-2 text-center"
+              className="border px-3 py-2 text-center"
             />
           </div>
-        </div>
-      </form>
+          </div>
+          </div>
+      </form >
 
-      
-      <div>
+      <div className="">
         <ul>
           {[...new Set(rates.map(rate => rate.payload.fare))].map((uniqueFare) => {
             const uniqueRate = rates.find(rate => rate.payload.fare === uniqueFare);
             return (
-              <li key={uniqueRate._id}>
-                Fare: {uniqueRate.payload.fare}
-                {!uniqueRate.accepted && (
-                  <>
-                    <button onClick={() => handleAccept(uniqueRate.payload.handymenId, uniqueRate.payload.userId, uniqueRate.payload.fare,service,selectedCategory)}>Accept</button>
-                    <button onClick={() => handleDecline(uniqueRate.payload.handymenId)}>Decline</button>
-                  </>
-                )}
-              </li>
+              <div className="flex justify-center">
+                <li
+                  className="border w-[20%] flex-col justify-center mb-4"
+                  key={uniqueRate._id}>
+                  <div className="flex justify-center text-xl">
+                    <span>Fare:</span>
+                    {uniqueRate.payload.fare}
+                  </div>
+                  {!uniqueRate.accepted && (
+                    <div className="flex justify-center">
+                      <button onClick={() => handleAccept(uniqueRate.payload.handymenId, uniqueRate.payload.userId, uniqueRate.payload.fare, service, selectedCategory)}
+                        className="bg-[#38A169] text-white p-2 m-2 w-24 rounded-full "
+                      >Accept</button>
+                      <button onClick={() => handleDecline(uniqueRate.payload.handymenId)}
+                        className="bg-[#EF4444] text-white p-2 m-2 ml-0 w-24 rounded-full"
+                      >Decline</button>
+                    </div>
+                  )}
+                </li>
+              </div>
             );
           })}
         </ul>
       </div>
-    </div>
+    </div >
   );
 }
 
