@@ -6,7 +6,8 @@ const connection = require("./database/db");
 const handymenRoute = require("./routes/handymenRoute");
 const userRoute = require("./routes/userRoutes");
 const paymentRoute = require("./routes/paymentRoute");
-const serviceRoute=require('./routes/serviceRoute')
+const serviceRoute=require('./routes/serviceRoute');
+const supportRoute = require("./routes/complaintRoute");
 // FOR PAYMENT GATWAY
 const path = require("path");
 const shortid = require("shortid");
@@ -32,6 +33,7 @@ app.use("/handymen", handymenRoute);
 app.use("/user", userRoute);
 app.use("/payment", paymentRoute);
 app.use("/service", serviceRoute);
+app.use("/support", supportRoute);
 
 app.use(errorMiddleware);
 

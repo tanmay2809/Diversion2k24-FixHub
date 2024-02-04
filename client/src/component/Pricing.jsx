@@ -4,88 +4,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useToast } from "@chakra-ui/toast";
 import { ImCross } from "react-icons/im";
-function loadScript(src) {
-  return new Promise((resolve) => {
-    const script = document.createElement("script");
-    script.src = src;
-    script.onload = () => {
-      resolve(true);
-    };
-    script.onerror = () => {
-      resolve(false);
-    };
-    document.body.appendChild(script);
-  });
-}
-const _DEV_ = document.domain === "localhost";
 
 const Pricing = () => {
-  const [name, setName] = useState("Mehul");
-
-  // async function displayRazorpay() {
-  //   const res = await loadScript(
-  //     "https://checkout.razorpay.com/v1/checkout.js"
-  //   );
-
-  //   if (!res) {
-  //     alert("Razorpay SDK failed to load. Are you online?");
-  //     return;
-  //   }
-
-  //   const data = await fetch("http://65.0.30.70:5000/payment/razorpay", {
-  //     method: "POST",
-  //   }).then((t) => t.json());
-
-  //   console.log(data);
-
-  //   const options = {
-  //     key: _DEV_ ? "rzp_test_35zy3Hqp4Jtv6M" : "PRODUCTION_KEY",
-  //     currency: data.currency,
-  //     amount: data.amount,
-  //     order_id: data.id,
-  //     name: "Donation",
-  //     description: "Thank you for nothing. Please give us some money",
-  //     image: "http://65.0.30.70:5000/logo.svg",
-  //     handler: function (response) {
-  //       alert(response.razorpay_payment_id);
-  //       alert(response.razorpay_order_id);
-  //       alert(response.razorpay_signature);
-  //     },
-  //     prefill: {
-  //       name,
-  //       email: "sdfdsjfh2@ndsfdf.com",
-  //       phone_number: "9899999999",
-  //     },
-  //   };
-  //   const paymentObject = new window.Razorpay(options);
-  //   paymentObject.open();
-  // }
+  const [name, setName] = useState("");
 const sid = JSON.parse(localStorage.getItem("user")).id;
-  const plans = [
-    {
-      name: "Shahrukh Khan",
-      pack: 100,
-      price: 1200,
-      features: ["Light, Fan"],
-      date: "21/02/03",
-    },
-    {
-      name: "Salman Khan",
-      pack: 200,
-      price: 2000,
-      features: ["Light "],
-      date: "21/02/03",
-    },
-    {
-      name: "Amir Khan",
-      pack: 500,
-      price: 1500,
-      features: ["Light, Fan, MCB"],
-      date: "21/02/03",
-    },
-  ];
-
-
   const toast = useToast();
 
   const [data, setData] = useState();
@@ -100,18 +22,18 @@ const sid = JSON.parse(localStorage.getItem("user")).id;
     };
     axios.request(config1)
       .then((response) => {
-       console.log(response.data);
-        setData(response.data)
+       console.log(response?.data);
+        setData(response?.data?.data)
       })
       .catch((error) => {
         console.log(error);
       });
+     
   };
 
   useEffect(() => {
     getAllData();
-  },[sid]);
-
+  },[]);
 
   function openPopup() {
     document.getElementById('popup').style.display = "block";
@@ -154,7 +76,7 @@ const sid = JSON.parse(localStorage.getItem("user")).id;
       };
 
       const { data } = await axios.post(
-        "http://localhost:4000/saveCustomerSupport",
+        "http://localhost:5000/support/saveCustomerSupport",
         formData,
         config
       );
@@ -193,7 +115,7 @@ const sid = JSON.parse(localStorage.getItem("user")).id;
             <div className="flex justify-between">
               <div></div>
               <div className="text-2xl lg:text-4xl text-center font-semibold font-roboto pt-2">
-                Become a partner
+                Lodge your Complaint
               </div>
               <button onClick={closePopup} className="text-right p-2">
                 <ImCross />
@@ -264,52 +186,32 @@ const sid = JSON.parse(localStorage.getItem("user")).id;
             </h3>
           </div>
           <div className="mt-16 space-y-6 justify-center items-center ">
-            {plans.map((item, idx) => (
-              <div
-                key={idx}
-                className="relative flex-1 flex flex-col justify-center p-2 rounded-xl border-2 "
-              >
-                <div className="flex justify-between ">
-                  <div className="flex w-full justify-between items-center h-12">
-                    <div className="text-indigo-600 font-medium">
-                      {item.name}
+            {data &&
+              data.map((item, idx) => (
+                <div key={idx} className="border p-2 flex justify-between">
+                  <div className="w-[30%]">
+                    <div className="flex items-center gap-5 ">
+                      HandymenName : {item.tid.name}
                     </div>
-
-                    <div className="flex ">
-                      <p className="font-bold">Service: </p>
-                      <ul className="ml-3 space-y-3">
-                        {item.features.map((featureItem, idx) => (
-                          <li key={idx} className="flex items-center gap-5">
-                            {featureItem}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <span className="font-bold">Date:</span>
-                      {item.date}
-                    </div>
+                    <div>Service_type :{item.service_type[0]}</div>
                   </div>
-                </div>
-                <div className="flex justify-between">
-                  <div className="flex py-[6px]">
-                    <div>Amount Earned:</div>
-                    <div className=" text-gray-800 text-base font-semibold">
-                      {item.price}
-                    </div>
+                  <div className=" text-gray-800 text-base font-semibold -translate-x-28">
+                    fare :{item.fare}
                   </div>
-                  <div className="">
+                  <div>
                     <button
                       className="bg-[#EAB308] text-[#000000]  py-[6px] px-[8px] rounded-md font-mullish font-bold
           hover:bg-lightBlue500 transition-all duration-200"
                       onClick={openPopup}
                     >
-                      Help & Support
+                      Get Help
                     </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            {/* {!data && (
+              <div className="text-center ">No services provided yet...</div>
+            )} */}
           </div>
         </div>
       </section>
