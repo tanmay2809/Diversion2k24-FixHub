@@ -111,7 +111,7 @@ function UserRequest() {
 
   const userId = JSON.parse(localStorage.getItem("user")).id;
   const authToken = localStorage.getItem("token");
-  const [question, setQuestion] = useState("");
+  const [service, setQuestion] = useState("");
   const resultRef = useRef();
   const navigate = useNavigate();
   const [rates, setRates] = useState([]);
@@ -132,19 +132,19 @@ function UserRequest() {
     setPrice(calculateTotalPrice(selectedOptions, quantities));
     console.log("local storage : ", JSON.parse(localStorage.getItem("user")));
     console.log(`Submitted data: ${selectedCategory},${JSON.stringify(selectedOptions)},${quantities},${price}`);
-    console.log("questionAsked", question, userId, selectedCategory);
+    console.log("questionAsked", service, userId, selectedCategory);
     const lat = JSON.parse(localStorage.getItem("user")).lat;
     const lon = JSON.parse(localStorage.getItem("user")).lon;
     const a = JSON.stringify(selectedOptions);
     const b = JSON.stringify(quantities);
     console.log(a);
-    socket.emit("questionAsked", { selectedCategory, userId, lat, lon, a, b, price, question,pic });
+    socket.emit("questionAsked", { selectedCategory, userId, lat, lon, a, b, price, service ,pic });
     setQuestion("");
     // resultRef.current.innerText = "Waiting for handymen to accept...";
   };
 
-  function handleAccept(handymenId, userId,price,question,selectedCategory) {
-    socket.emit('moveToChatStudent', { userId, handymenId,price,question,selectedCategory });
+  function handleAccept(handymenId, userId,price, service,selectedCategory) {
+    socket.emit('moveToChatStudent', { userId, handymenId,price, service,selectedCategory });
     setQuestion("");
   };
 
@@ -170,7 +170,7 @@ function UserRequest() {
     m.data.push(payload.userId);
     m.data.push(payload.handymenId);
     m.data.push(payload.price);
-    m.data.push(payload.question);
+    m.data.push(payload.service);
     m.data.push(payload.selectedCategory);
     localStorage.setItem("user", JSON.stringify(m));
     navigate("/chat");
@@ -238,7 +238,7 @@ function UserRequest() {
             type="text"
             name="chat"
             placeholder="domain"
-            value={question}
+            value={service}
             onChange={(e) => {
               setQuestion(e.target.value);
             }}
@@ -281,7 +281,7 @@ function UserRequest() {
                 Fare: {uniqueRate.payload.fare}
                 {!uniqueRate.accepted && (
                   <>
-                    <button onClick={() => handleAccept(uniqueRate.payload.handymenId, uniqueRate.payload.userId, uniqueRate.payload.fare, question,selectedCategory)}>Accept</button>
+                    <button onClick={() => handleAccept(uniqueRate.payload.handymenId, uniqueRate.payload.userId, uniqueRate.payload.fare,service,selectedCategory)}>Accept</button>
                     <button onClick={() => handleDecline(uniqueRate.payload.handymenId)}>Decline</button>
                   </>
                 )}
